@@ -1,0 +1,35 @@
+<form method="POST" action="{{post_to_url}}"
+{% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+  {{ form.non_field_errors }}
+  {% csrf_token %}
+  <input
+     type="hidden"
+     id="id_invalid_url"
+     name="invalid_url" />
+  <input 
+     type="hidden" 
+     id="id_success_url" 
+     name="success_url" 
+     value="{{success_url}}" />
+  <script>
+    var invalid = document.getElementById('id_invalid_url');
+    invalid.value = document.location.href;
+  {% if not success_url %}
+    var surl = document.getElementById('id_success_url');
+    surl.value = invalid.value;
+  {% endif %}
+  </script>
+
+  {% for field in form %}
+  <div class="fieldWrapper">
+    {{ field.errors }}
+    {{ field.label_tag }} {{ field }}
+  </div>
+  {% endfor %}
+
+  
+  <p>
+    <button type='submit'>{{submit_caption}}</button>
+  </p>
+
+</form>
