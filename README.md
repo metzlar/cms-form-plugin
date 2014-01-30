@@ -8,6 +8,15 @@ Installation
 
 - `pip install cms-form-plugin`
 - Add `cms_form_plugin` to `INSTALLED_APPS`
+- Specify `FORM_CLASSES` in settings.py a tuple of tuples to be used as `choices` attribute to the plugin's `form_class` field. For example:
+  
+  FORM_CLASSES = (
+      (
+          'django.contrib.auth.forms.AuthenticationForm', 
+          'Login Form'
+      ),
+  )
+
 - Include `cms_form_plugin.urls` in your `urlpatterns`
 - Run `manage.py migrate cms_form_plugin`
 
