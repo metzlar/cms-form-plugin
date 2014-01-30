@@ -20,6 +20,15 @@ class CMSFormPlugin(CMSPluginBase):
 
     @classmethod
     def form_post(cls, request, instance_id):
+        '''
+        Handles all POST requests from FormPlugin's form_class
+        instances. If the form is valid, it calls the form's
+        save method. If the form is not valid, it stores the
+        form's pickled instance inside a cookie with name
+        format invalid_form_%(instance_id) where instance_id
+        is the id of the FormPlugin instance (to support multiple
+        forms on one page)
+        '''
         
         instance = get_object_or_404(
             FormPlugin, pk = int(instance_id))
@@ -31,10 +40,13 @@ class CMSFormPlugin(CMSPluginBase):
         form = form(request.POST)
             
         if form.is_valid():
+            if hasattr(form, 'save'):
+                if hasattr(form.save, '__call__'):
+                    form.save()
             response = HttpResponseRedirect(
                 request.POST['success_url']
             )
-            response.delete_cookie('invalid_form')
+            response.delete_cookie('invalid_form_%s' % instance_id )
             return response
 
         response = HttpResponseRedirect(
@@ -42,21 +54,37 @@ class CMSFormPlugin(CMSPluginBase):
         )
         # store the invalid form in a cookie
         response.set_cookie(
-            'invalid_form',
+            'invalid_form_%s' % instance_id,
             base64.urlsafe_b64encode(
                 pickle.dumps(form))
         )
         return response
 
     def render(self, context, instance, placeholder):
+        '''
+        Renders the plugin instance. If there is a pickled
+        instance of the plugin's form_class in a cookie with name
+        invalid_form_%(instance_id) we assume the form was
+        submitted before but rendered invalid.
+        '''
+        form = None
+        form_class = import_by_path(instance.form_class)
         request = context['request']
-        if 'invalid_form' in request.COOKIES:
-            context['form'] = pickle.loads(
-                base64.b64decode(
-                    request.COOKIES.get('invalid_form')))
-        else:
-            form = import_by_path(instance.form_class)
-            context['form'] = form()
+        if 'invalid_form_%s' % instance.id in request.COOKIES:
+            try:
+                form = pickle.loads(
+                    base64.b64decode(
+                        request.COOKIES.get(
+                            'invalid_form_%s' % instance.id)))
+                if not isinstance(form, form_class):
+                    form = None
+            except Exception:
+                # a lot can go wrong here so just ignore
+                pass
+        if form is None:
+            form = form_class()
+
+        context['form'] = form
         
         context.update({
             'post_to_url': reverse(
