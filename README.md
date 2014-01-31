@@ -41,12 +41,13 @@ Consider the following form in `myapp.forms` :
             if not_valid:
                 raise forms.ValidationError('Invalid')
 
-Now add CMS Form Plugin to a placeholder with `form_class` set to `myapp.forms.MyForm`
+Now add `MyForm` to `settings.FORM_CLASSES` and start adding it to tthose placeholders.
 
+CMS Form Plugin to a placeholder with `form_class` set to `myapp.forms.MyForm`
 More configuration
 ------------------
 
-**form_class** - full path to the class to use as form
+**form_class** - full path to the class to use as form. Must be an entry from `settings.FORM_CLASSES` to make the plugin easier to use by civilians (non-developers).
 
 **success_url** - url to redirect to when the form got successfully validated. Defaults to the current url of the page containing the placeholder.
 
