@@ -8,7 +8,7 @@ class FormPlugin(CMSPlugin):
         max_length = 200,
         choices=settings.FORM_CLASSES
     )
-    success_url = models.URLField(null = True)
+    success_url = models.URLField(null = True, blank = True)
     submit_caption = models.CharField(
         default = 'Submit',
         max_length = 200)

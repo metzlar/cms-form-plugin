@@ -2,3 +2,7 @@
 *.pot
 *.pyc
 local_settings.py
+example/static/*
+example/media/*
+example/database.sqlite
+*~
