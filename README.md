@@ -6,7 +6,7 @@ Django CMS Form plugin inspired by django.views.generic.edit.FormView
 Installation
 ------------
 
-- `pip install cms-form-plugin`
+- This project is in Beta, clone it directly from github or execute: `pip install -e git+https://github.com/metzlar/cms-form-plugin#egg=cms-form-plugin`
 - Add `cms_form_plugin` to `INSTALLED_APPS`
 - Specify `FORM_CLASSES` in settings.py a tuple of tuples to be used as `choices` attribute to the plugin's `form_class` field. For example:
   
