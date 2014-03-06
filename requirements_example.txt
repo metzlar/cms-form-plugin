@@ -1,0 +1,11 @@
+Django==1.5.5
+South==0.8.4
+argparse==1.2.1
+-e git+https://github.com/metzlar/cms-form-plugin@4c321f195bd301d508cc80f8daa84f2c1ac701d3#egg=cms_form_plugin-dev
+django-classy-tags==0.5
+django-cms==2.4.3
+django-mptt==0.5.2
+django-sekizai==0.7
+html5lib==1.0b3
+six==1.5.2
+wsgiref==0.1.2
