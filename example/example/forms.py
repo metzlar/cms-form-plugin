@@ -10,6 +10,8 @@ class ExampleForm(forms.Form):
         # check validity of data['name']
         # do something with data['..']
 
-        raise forms.ValidationError('Invalid')
+        for k,v in data.iteritems():
+            if v != 'valid':
+                raise forms.ValidationError('Invalid')
 
         return data
