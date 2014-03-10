@@ -32,36 +32,43 @@ class CMSFormPlugin(CMSPluginBase):
 
         if not hasattr(request, 'session'):
             raise ImproperlyConfigured('Sessions must be enabled')
-        
+
         instance = get_object_or_404(
             FormPlugin, pk = int(instance_id))
 
-        if not request.method == 'POST':
-            raise Http404('Not found')
-
         form = import_by_path(instance.form_class)
-        form = form(request.POST)
+        response = None
+
+        if request.method == 'POST':
+            form = form(request.POST)
             
-        if form.is_valid():
-            if hasattr(form, 'save'):
-                if hasattr(form.save, '__call__'):
-                    form.save()
+            if form.is_valid():
+                if hasattr(form, 'save'):
+                    if hasattr(form.save, '__call__'):
+                        form.save()
+                response = HttpResponseRedirect(
+                    request.POST['success_url']
+                )
+                if 'invalid_form_%s' % instance_id in request.session:
+                    del request.session[
+                        'invalid_form_%s' % instance_id]
+
+                return response
+
+            if request.POST['invalid_url']:
+                response = HttpResponseRedirect(
+                    request.POST['invalid_url']
+                )
+                
+            # store the invalid form in the session
+            form.invalid_url = request.POST['invalid_url']
+            request.session[
+                'invalid_form_%s' % instance_id] = pickle.dumps(form)
+
+        if not response:
             response = HttpResponseRedirect(
-                request.POST['success_url']
+                request.META['HTTP_REFERER'] # back to the referer
             )
-            if 'invalid_form_%s' % instance_id in request.session:
-                del request.session[
-                    'invalid_form_%s' % instance_id]
-
-            return response
-
-        response = HttpResponseRedirect(
-            request.POST['invalid_url']
-        )
-        # store the invalid form in the session
-        request.session[
-            'invalid_form_%s' % instance_id] = pickle.dumps(form)
-
         return response
 
     def render(self, context, instance, placeholder):
