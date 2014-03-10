@@ -1,5 +1,9 @@
 from cms.plugin_base import CMSPluginBase
+from cms.models import Page
 from cms.plugin_pool import plugin_pool
+from cms.forms import fields
+from cms.utils import get_language_from_request
+from cms.forms.utils import get_page_choices
 
 from models import FormPlugin
 
@@ -7,14 +11,26 @@ from django.utils.translation import ugettext as _
 from django.utils.module_loading import import_by_path
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.core.exceptions import ImproperlyConfigured
+from django.forms import ModelForm
 
 import pickle
 
 
+class CMSFormPluginForm(ModelForm):
+    success_page = fields.PageSelectFormField(
+        get_page_choices,
+        required = False
+    )
+    
+    class Meta:
+        model = FormPlugin
+
+
 class CMSFormPlugin(CMSPluginBase):
     model = FormPlugin
+    form = CMSFormPluginForm
     name = _("Form")
     render_template = "form/form.html"
 
@@ -94,12 +110,18 @@ class CMSFormPlugin(CMSPluginBase):
             form = pickle.loads(form)
         
         context['form'] = form
+
+        success_url = instance.success_url
+        if not success_url and instance.success_page:
+            success_url = instance.success_page.get_absolute_url(
+                language = get_language_from_request(request)
+            )
         
         context.update({
             'post_to_url': reverse(
                 'form_post', args=(instance.id,)
             ),
-            'success_url': instance.success_url,
+            'success_url': success_url,
             'submit_caption': instance.submit_caption,
         })
         return context

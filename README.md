@@ -49,6 +49,8 @@ More configuration
 
 **form_class** - full path to the class to use as form. Must be an entry from `settings.FORM_CLASSES` to make the plugin easier to use by civilians (non-developers).
 
-**success_url** - url to redirect to when the form got successfully validated. Defaults to the current url of the page containing the placeholder.
+**success_url** - url to redirect to when the form got successfully validated.
+
+**success_page** - page to redirect to when no `success_url` is specified and the form got successfully validated. If both `success_url` and `success_page` are undefined, the redirect uses the current page.
 
 **submit_caption** - caption for the submit button. Defaults to 'Submit'
