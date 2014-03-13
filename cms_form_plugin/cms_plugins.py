@@ -111,7 +111,7 @@ class CMSFormPlugin(CMSPluginBase):
         else:
             form = pickle.loads(form)
 
-        setattr(form, 'request')
+        setattr(form, 'request', request)
             
         context['form'] = form
 
