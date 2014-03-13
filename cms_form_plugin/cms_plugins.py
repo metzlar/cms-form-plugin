@@ -1,5 +1,4 @@
 from cms.plugin_base import CMSPluginBase
-from cms.models import Page
 from cms.plugin_pool import plugin_pool
 from cms.forms import fields
 from cms.utils import get_language_from_request
@@ -57,6 +56,8 @@ class CMSFormPlugin(CMSPluginBase):
 
         if request.method == 'POST':
             form = form(request.POST)
+
+            setattr(form, 'request', request)
             
             if form.is_valid():
                 if hasattr(form, 'save'):
@@ -78,6 +79,7 @@ class CMSFormPlugin(CMSPluginBase):
                 
             # store the invalid form in the session
             form.invalid_url = request.POST['invalid_url']
+            delattr(form, 'request')
             request.session[
                 'invalid_form_%s' % instance_id] = pickle.dumps(form)
 
@@ -108,7 +110,9 @@ class CMSFormPlugin(CMSPluginBase):
             form = form_class()
         else:
             form = pickle.loads(form)
-        
+
+        setattr(form, 'request')
+            
         context['form'] = form
 
         success_url = instance.success_url
