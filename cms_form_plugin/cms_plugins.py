@@ -116,10 +116,12 @@ class CMSFormPlugin(CMSPluginBase):
         context['form'] = form
 
         success_url = instance.success_url
-        if not success_url and instance.success_page:
-            success_url = instance.success_page.get_absolute_url(
+        if not success_url:
+            if instance.success_page:
+                success_url = instance.success_page.get_absolute_url(
                 language = get_language_from_request(request)
             )
+
         
         context.update({
             'post_to_url': reverse(
