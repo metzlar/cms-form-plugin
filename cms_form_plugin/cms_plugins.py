@@ -119,8 +119,8 @@ class CMSFormPlugin(CMSPluginBase):
         if not success_url:
             if instance.success_page:
                 success_url = instance.success_page.get_absolute_url(
-                language = get_language_from_request(request)
-            )
+                    language = get_language_from_request(request)
+                )
 
         
         context.update({
