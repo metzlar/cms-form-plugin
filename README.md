@@ -54,3 +54,17 @@ More configuration
 **success_page** - page to redirect to when no `success_url` is specified and the form got successfully validated. If both `success_url` and `success_page` are undefined, the redirect uses the current page.
 
 **submit_caption** - caption for the submit button. Defaults to 'Submit'
+
+The ``form_class`` can define ``get_success_url(request)`` to be 
+more flexible in creation of the success url. Consider the following
+example:
+
+    class MyForm(forms.Form):
+
+        def clean(self):
+	    super(MyForm, self).clean()
+            self.m = MyModel(path = self.request.path)
+	    self.m.save()
+
+	def get_success_url(self):
+	    return self.m.get_absolute_url() or self.m.path
