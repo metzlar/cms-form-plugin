@@ -62,9 +62,9 @@ example:
     class MyForm(forms.Form):
 
         def clean(self):
-	    super(MyForm, self).clean()
+	        super(MyForm, self).clean()
             self.m = MyModel(path = self.request.path)
-	    self.m.save()
+	        self.m.save()
 
 	    def get_success_url(self):
 	        return self.m.get_absolute_url() or self.m.path
