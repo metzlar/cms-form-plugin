@@ -66,5 +66,5 @@ example:
             self.m = MyModel(path = self.request.path)
 	    self.m.save()
 
-	def get_success_url(self):
-	    return self.m.get_absolute_url() or self.m.path
+	    def get_success_url(self):
+	        return self.m.get_absolute_url() or self.m.path
